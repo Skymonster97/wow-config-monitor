@@ -1,0 +1,36 @@
+# Libraries
+node_modules/
+
+# logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Lock files
+yarn.lock
+pnpm-lock.yaml
+package-lock.json
+
+# Code editor
+.vscode
+
+# Output of packing
+*.tgz
+
+# Optional eslint cache
+.eslintcache
+
+# Optional npm cache directory
+.npm
+
+# Yarn Integrity file
+.yarn-integrity
+
+# yarn v2
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*

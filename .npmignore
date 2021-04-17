@@ -1,0 +1,6 @@
+# Config files
+.editorconfig
+.eslintrc
+.gitattributes
+.gitignore
+.yarnclean

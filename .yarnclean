@@ -1,0 +1,81 @@
+# test directories
+__tests__
+test
+tests
+powered-test
+
+# asset directories
+docs
+doc
+website
+images
+assets
+
+# assets
+*.html
+*.htm
+*.php
+*.jpg
+*.jpeg
+*.png
+*.apng
+*.gif
+*.webp
+*.svg
+
+# examples
+example
+examples
+
+# code coverage directories
+coverage
+.nyc_output
+
+# build scripts
+Makefile
+Gulpfile.js
+Gruntfile.js
+
+# configs
+appveyor.yml
+circle.yml
+codeship-services.yml
+codeship-steps.yml
+wercker.yml
+.tern-project
+.gitattributes
+.editorconfig
+.*ignore
+.eslintrc
+.eslintrc.js
+.eslintrc.cjs
+.eslintrc.yaml
+.eslintrc.yml
+.eslintrc.json
+.jshintrc
+.flowconfig
+.documentup.json
+.yarn-metadata.json
+.travis.yml
+.nycrc
+.nycrc.json
+.github
+.vscode
+.taprc
+.npmrc
+.yarnrc
+
+# lock files
+yarn.lock
+pnpm-lock.yaml
+package-lock.json
+
+# misc
+*.md
+*.markdown
+*.yaml
+*.yml
+license*
+LICENCE*
+authors*
+AUTHORS*
