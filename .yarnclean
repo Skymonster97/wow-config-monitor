@@ -65,6 +65,9 @@ wercker.yml
 .npmrc
 .yarnrc
 
+# Optional eslint cache
+.eslintcache
+
 # lock files
 yarn.lock
 pnpm-lock.yaml
