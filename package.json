@@ -2,7 +2,16 @@
   "name": "wow-config-monitor",
   "version": "0.0.0",
   "private": true,
-  "description": "",
+  "description": "World of Warcraft configuration monitor",
+  "keywords": [
+    "world of warcraft",
+    "wow",
+    "parser",
+    "config",
+    "wtf",
+    "monitor",
+    "cvar"
+  ],
   "license": "MIT",
   "author": {
     "name": "Skymonster97",
