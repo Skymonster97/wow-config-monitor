@@ -7,5 +7,23 @@
   "author": {
     "name": "Skymonster97",
     "email": "Skymonster97@gmail.com"
+  },
+  "scripts": {
+    "lint:fix": "./node_modules/.bin/eslint . --fix --ext .js,.json,.md",
+    "lint:test": "./node_modules/.bin/eslint . --ext .js,.json,.md"
+  },
+  "devDependencies": {
+    "@babel/eslint-parser": "^7.13.14",
+    "@babel/plugin-proposal-class-properties": "^7.13.0",
+    "@skymonster97/eslint-config": "Skymonster97/eslint-config",
+    "eslint": "^7.24.0",
+    "eslint-plugin-array-func": "^3.1.7",
+    "eslint-plugin-eslint-comments": "^3.2.0",
+    "eslint-plugin-json": "^2.1.2",
+    "eslint-plugin-json-files": "^0.8.1",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.3.1",
+    "eslint-plugin-sonarjs": "^0.6.0",
+    "eslint-plugin-unicorn": "^28.0.2"
   }
 }
