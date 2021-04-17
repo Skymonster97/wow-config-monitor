@@ -4,3 +4,8 @@
 .gitattributes
 .gitignore
 .yarnclean
+
+# Project files
+build/
+src/app/
+wow.profiles.json

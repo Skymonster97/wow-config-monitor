@@ -1,6 +1,6 @@
 {
   "name": "wow-config-monitor",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "private": true,
   "description": "World of Warcraft configuration monitor",
   "keywords": [
@@ -17,9 +17,21 @@
     "name": "Skymonster97",
     "email": "Skymonster97@gmail.com"
   },
+  "main": "./src/index.js",
   "scripts": {
+    "start": "node ./src/app/app.js",
+    "build": "node ./build/nexe.js",
+    "clean": "yarn autoclean --force",
     "lint:fix": "./node_modules/.bin/eslint . --fix --ext .js,.json,.md",
     "lint:test": "./node_modules/.bin/eslint . --ext .js,.json,.md"
+  },
+  "dependencies": {
+    "@discordjs/collection": "^0.1.6",
+    "colorette": "^1.2.2",
+    "find-process": "Skymonster97/find-process#patch-1",
+    "joi": "^17.4.0",
+    "moment": "^2.29.1",
+    "node-abort-controller": "^1.2.1"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.13.14",
@@ -33,6 +45,10 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^4.3.1",
     "eslint-plugin-sonarjs": "^0.6.0",
-    "eslint-plugin-unicorn": "^28.0.2"
+    "eslint-plugin-unicorn": "^28.0.2",
+    "nexe": "^4.0.0-beta.17"
+  },
+  "engines": {
+    "node": ">=14"
   }
 }
