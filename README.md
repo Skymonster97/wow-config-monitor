@@ -1,6 +1,6 @@
 # wow-config-monitor
 
-> World of Warcraft configuration monitor
+> Monitoring of World of Warcraft configuration file and restoring user defined settings
 
 ## Warning
 
