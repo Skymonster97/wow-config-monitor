@@ -1,17 +1,18 @@
+<!-- markdownlint-disable no-inline-html header-increment -->
 # wow-config-monitor
 
 > Monitoring of World of Warcraft configuration file and restoring user defined settings
 
-## Warning
+### Warning
 
 Author is not responsible for any sort of damages\
 Use at your own risk
 
-## Features
+### Features
 
 - [x] Supports multiple game instances
 
-## How to build
+### How to build
 
 > Requires **Git**, **Node.js** and **Yarn** installed
 
