@@ -6,7 +6,7 @@ const entry = Joi.object({
     name: Joi.string().required(),
     directory: Joi.string().required(),
     executables: Joi.array().items(Joi.string().required()).required(),
-    cvars: Joi.object().pattern(Joi.string(), Joi.string()).required(),
+    cvars: Joi.object().pattern(Joi.string(), Joi.string().allow('')).required(),
 });
 
 const entries = Joi.array().items(entry.required());
