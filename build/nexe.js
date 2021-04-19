@@ -15,9 +15,11 @@ const root = path.join(__dirname, '..');
 const dist = path.join(root, 'build', 'dist');
 
 (async () => {
+    const fileName = 'wow.profiles.json';
+
     await copyFile({
-        filePath: path.join(root, 'src', 'app', 'wow.profiles.json'),
-        dist: path.join(dist, 'wow.profiles.json'),
+        filePath: path.join(root, 'src', 'app', fileName),
+        dist: path.join(dist, fileName),
     }, fs.constants.COPYFILE_EXCL).catch(error => {
         if (error.code === 'EEXIST') {
             // eslint-disable-next-line no-console

@@ -15,7 +15,8 @@ const { writeFile, resolveGamePath, safeRequire } = require('../util/Util.js');
 const { schema, defaults } = require('../schemas/profiles.js');
 
 (async () => {
-    const profilesPath = path.join(process.appRoot, 'wow.profiles.json');
+    const fileName = 'wow.profiles.json';
+    const profilesPath = path.join(process.appRoot, fileName);
     let profiles = safeRequire(profilesPath);
 
     if (!profiles) {
