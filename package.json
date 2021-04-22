@@ -1,6 +1,6 @@
 {
   "name": "wow-config-monitor",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "private": true,
   "description": "World of Warcraft configuration monitor",
   "keywords": [
