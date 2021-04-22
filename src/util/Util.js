@@ -65,7 +65,7 @@ class Util {
 
     static async resolveGamePath(dir, custom = ['_retail_', '_ptr_', '_classic_']) {
         const [folders] = await Util.dirContent(path.resolve(dir));
-        const prefix = Array.isArray(custom) ? folders.find(f => custom.includes(f)) : folders.includes(custom);
+        const prefix = Array.isArray(custom) ? folders.find(f => custom.includes(f)) : folders.find(f => f === custom);
         if (prefix) return path.join(dir, prefix);
         return path.resolve(dir);
     }
