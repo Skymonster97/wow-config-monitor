@@ -19,7 +19,7 @@ class Line {
     }
 
     isFilled() {
-        return Object.values(this.toJSON())
+        return Object.values(this.parsed)
             .every(value => value && typeof value === 'string');
     }
 
@@ -31,10 +31,6 @@ class Line {
             default:
                 return false;
         }
-    }
-
-    toJSON() {
-        return { command: this.parsed.command, key: this.parsed.key, value: this.parsed.value };
     }
 
     toString() {
