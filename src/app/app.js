@@ -9,59 +9,160 @@ process
 require('./setup.js')();
 
 const path = require('path');
+const color = require('colorette');
 const Parser = require('../parser/Parser.js');
 const Monitor = require('../monitor/Monitor.js');
-const { writeFile, resolveGamePath, safeRequire } = require('../util/Util.js');
-const { schema, defaults } = require('../schemas/profiles.js');
+const { readFile, writeFile, resolveGamePath, safeRequire, dirExists } = require('../util/Util.js');
+const { schema, defaultProfile } = require('../schemas/profiles.js');
+
+const { underline: _u, cyanBright: _cb } = color;
+
+const createProifle = async (index, data) => {
+    const name = data.name ? `${index}:${data.name}` : index;
+
+    const directory = data.directory
+        ? await resolveGamePath(data.directory)
+        : defaultProfile.directory;
+
+    const executables = data.executables?.length > 0
+        ? data.executables
+        : defaultProfile.executables;
+
+    const cvars = data.cvars || defaultProfile.cvars;
+
+    return { name, directory, executables, cvars };
+};
+
+const checkConfig = async (profile, parser, configPath) => {
+    const hasCvars = Object.keys(profile.cvars).length > 0;
+
+    if (hasCvars) {
+        const configData = await readFile({ filePath: configPath });
+        const parsed = parser.parse(configData);
+
+        const changed = Object.entries(profile.cvars).some(([key, value]) => {
+            if (!parsed.some(line => line.parsed.key === key)) return true;
+            if (!parsed.some(line => line.parsed.value === value)) return true;
+            return false;
+        });
+
+        if (changed) {
+            await writeFile({ filePath: configPath, data: parser.generate(parsed) });
+            // eslint-disable-next-line no-console
+            console.info(`[${profile.name}] - Config restored`);
+        } else {
+            // eslint-disable-next-line no-console
+            console.debug(`[${profile.name}] - No changes are made; Nothing to change`);
+        }
+    } else {
+        // eslint-disable-next-line no-console
+        console.debug(`[${profile.name}] - No changes are made; No cvars provided`);
+    }
+};
+
+const listen = profile => {
+    const parser = new Parser(profile.name, profile.cvars);
+    const monitor = new Monitor(profile.directory, profile.executables);
+
+    monitor.on('start', () => {
+        // eslint-disable-next-line no-console
+        console.info(`[${profile.name}] - Monitoring started`);
+    });
+
+    monitor.on('stop', () => {
+        // eslint-disable-next-line no-console
+        console.info(`[${profile.name}] - Monitoring stopped`);
+    });
+
+    monitor.on('detect', processData => {
+        // eslint-disable-next-line no-console
+        console.info(`[${profile.name}] - Process [${processData.pid}] ${_u(_cb(processData.name))} found`);
+    });
+
+    monitor.on('kill', async processData => {
+        // eslint-disable-next-line no-console
+        console.info(`[${profile.name}] - Process [${processData.pid}] ${_u(_cb(processData.name))} closed`);
+
+        if (monitor.active.some(entry => entry.bin === processData.bin)) {
+            // eslint-disable-next-line no-console
+            console.debug(`[${profile.name}] - No changes are made; Process is still running under the same directory`);
+        } else {
+            const configPath = monitor.dir
+                ? path.join(monitor.dir, 'WTF', 'Config.wtf')
+                : path.join(path.dirname(processData.bin), 'WTF', 'Config.wtf');
+
+            await checkConfig(profile, parser, configPath);
+        }
+    });
+
+    monitor.start();
+
+    return { parser, monitor };
+};
 
 (async () => {
     const fileName = 'wow.profiles.json';
     const profilesPath = path.join(process.appRoot, fileName);
-    let profiles = safeRequire(profilesPath);
+    const profiles = safeRequire(profilesPath);
 
-    if (!profiles) {
-        await writeFile({
-            filePath: profilesPath,
-            data: JSON.stringify(defaults, null, 2),
-        }, { flag: 'wx' });
-
-        profiles = defaults;
+    if (!profiles || profiles?.length === 0) {
+        // eslint-disable-next-line no-console
+        console.warn('No profiles found; Running in listen only mode');
+        return listen({ ...defaultProfile, name: 'GLOBAL' });
     }
 
     await schema.validateAsync(profiles).catch(error => {
         throw error.details;
     });
 
-    profiles.forEach(async (entry, index) => {
-        const gamePath = await resolveGamePath(entry.directory);
-        const gameConfig = path.join(gamePath, 'WTF', 'Config.wtf');
+    let counter = 0;
+    const used = new Set();
 
-        const parser = new Parser(gameConfig, entry.name ?? index, entry.cvars);
-        const monitor = new Monitor(entry.executables, entry.directory);
-
-        monitor.on('start', () => { // eslint-disable-next-line no-console
-            console.info(`${entry.name} - Monitoring started`);
-        });
-
-        monitor.on('stop', () => { // eslint-disable-next-line no-console
-            console.info(`${entry.name} - Monitoring stopped`);
-        });
-
-        monitor.on('detect', data => { // eslint-disable-next-line no-console
-            console.info(`${entry.name} - Process [${data.pid}] "${data.name}" found`);
-        });
-
-        monitor.on('kill', async data => { // eslint-disable-next-line no-console
-            console.info(`${entry.name} - Process [${data.pid}] "${data.name}" closed`);
-
-            await writeFile({
-                filePath: parser.filePath,
-                data: await parser.generate(),
-            });
+    for (const [index, data] of profiles.entries()) {
+        /* eslint-disable no-await-in-loop */
+        if (Object.keys(data).length > 0) {
+            if (data.directory) {
+                if (await dirExists({ dir: data.directory })) {
+                    const dir = path.normalize(data.directory);
+                    if (used.has(dir)) {
+                        counter++;
+                        // eslint-disable-next-line no-console
+                        console.warn(`Profile [${index}] skipped; Duplicate directory provided`);
+                    } else {
+                        used.add(dir);
+                        const profile = await createProifle(index, data);
+                        const { monitor, parser } = await listen(profile);
+                        const configPath = path.join(monitor.dir, 'WTF', 'Config.wtf');
+                        await checkConfig(profile, parser, configPath);
+                    }
+                } else {
+                    counter++;
+                    // eslint-disable-next-line no-console
+                    console.warn(`Profile [${index}] skipped; Invalid directory provided`);
+                }
+            } else if (data.cvars ? Object.keys(data.cvars).length > 0 : false) {
+                counter++;
+                // eslint-disable-next-line no-console
+                console.warn(`Profile [${index}] skipped; No cvars provided`);
+            } else {
+                counter++;
+                // eslint-disable-next-line no-console
+                console.warn(`Profile [${index}] skipped; No directory provided`);
+            }
+        } else {
+            counter++;
             // eslint-disable-next-line no-console
-            console.info(`${entry.name} - Changes saved`);
-        });
+            console.warn(`Profile [${index}] skipped; Empty profile provided`);
+        }
 
-        monitor.start();
-    });
+        if (counter === profiles.length) {
+            // eslint-disable-next-line no-console
+            console.warn('No valid profiles found; Running in listen only mode');
+            used.clear();
+            return listen({ ...defaultProfile, name: 'GLOBAL' });
+        }
+        /* eslint-enable no-await-in-loop */
+    }
+
+    return null;
 })();

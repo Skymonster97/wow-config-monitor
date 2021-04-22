@@ -2,22 +2,34 @@
 
 const Joi = require('joi');
 
-const entry = Joi.object({
-    name: Joi.string().required(),
-    directory: Joi.string().required(),
-    executables: Joi.array().items(Joi.string().required()).required(),
-    cvars: Joi.object().pattern(Joi.string(), Joi.string().allow('')).required(),
+const profile = Joi.object({
+    name: Joi
+        .string()
+        .allow('')
+        .default(''),
+    directory: Joi
+        .string()
+        .allow('')
+        .default(''),
+    executables: Joi
+        .array()
+        .items(Joi.string())
+        .default(['Wow.exe', 'Wow-64.exe']),
+    cvars: Joi
+        .object()
+        .pattern(Joi.string(), Joi.string().allow(''))
+        .default({}),
 });
 
-const entries = Joi.array().items(entry.required());
+const profiles = Joi
+    .array()
+    .items(profile);
 
-const defaults = [
-    {
-        name: '',
-        directory: '',
-        executables: ['Wow.exe', 'Wow-64.exe'],
-        cvars: {},
-    },
-];
+const defaultProfile = {
+    name: null,
+    directory: null,
+    executables: ['Wow.exe', 'Wow-64.exe'],
+    cvars: {},
+};
 
-module.exports = { schema: entries, defaults };
+module.exports = { schema: profiles, defaultProfile };

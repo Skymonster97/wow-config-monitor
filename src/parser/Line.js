@@ -41,8 +41,8 @@ class Line {
         return `${this.parsed.command} ${this.parsed.key} "${this.parsed.value}"`;
     }
 
-    static toString(command, key, value) {
-        return `${command} ${key} "${value}"`;
+    static construct(command, key, value) {
+        return new Line(`${command} ${key} "${value}"`);
     }
 }
 

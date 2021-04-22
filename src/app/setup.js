@@ -1,11 +1,11 @@
 'use strict';
 
 const path = require('path');
+const { keepAlive } = require('../util/Util.js');
+const pkg = require('../../package.json');
 
 module.exports = () => {
     new (require('../util/Logger.js'))({ debug: true }).inject();
-    const { keepAlive } = require('../util/Util.js');
-    const pkg = require('../../package.json');
 
     // eslint-disable-next-line node/no-process-env
     const env = process.env.NODE_ENV = process.__nexe ? 'production' : 'development';

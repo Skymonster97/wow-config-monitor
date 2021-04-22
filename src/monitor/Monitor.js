@@ -6,31 +6,29 @@ const findProcess = require('find-process');
 const Collection = require('@discordjs/collection');
 
 class Monitor extends EventEmitter {
-    constructor(names, dir) {
+    constructor(dir, names = []) {
         super();
 
-        this.names = new RegExp(names.map(n => `(${n})`).join('|'), 'i');
-        this.dir = path.normalize(dir);
+        this.names = new RegExp(names.length > 0 ? `^${names.map(n => `(${n})`).join('|')}$` : '', 'i');
+        this.dir = dir ? path.normalize(dir) : null;
         this.active = new Collection();
         this.interval = null;
     }
 
     async check() {
         const list = await findProcess('name', this.names);
-        const matches = list.filter(data => path.dirname(data.bin) === this.dir);
+        const matches = this.dir ? list.filter(data => path.dirname(data.bin) === this.dir) : list;
+        const closed = this.active.filter(entry => !matches.some(data => data.pid === entry.pid));
+        const uncached = matches.filter(data => !this.active.has(data.pid));
 
-        this.active
-            .filter(entry => !matches.some(data => data.pid === entry.pid))
-            .each(entry => {
-                this.active.delete(entry.pid);
-                this.emit('kill', entry);
-            });
+        uncached.forEach(data => {
+            this.active.set(data.pid, data);
+            this.emit('detect', data);
+        });
 
-        matches.forEach(data => {
-            if (!this.active.has(data.pid)) {
-                this.active.set(data.pid, data);
-                this.emit('detect', data);
-            }
+        closed.each(entry => {
+            this.active.delete(entry.pid);
+            this.emit('kill', entry);
         });
     }
 

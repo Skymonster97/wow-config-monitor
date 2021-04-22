@@ -1,7 +1,7 @@
 'use strict';
 
-const { existsSync, promises } = require('fs');
-const { readFile, readdir, copyFile, mkdir, writeFile } = promises;
+const { promises } = require('fs');
+const { readFile, readdir, copyFile, mkdir, writeFile, access } = promises;
 const path = require('path');
 const AbortController = require('node-abort-controller');
 
@@ -28,45 +28,61 @@ class Util {
             const controller = new AbortController();
             const timeout = new Error(`Timeout:${wait}`);
             controller.signal.addEventListener('abort', () => reject(timeout));
-            fn().then(resolve).catch(reject);
+            fn(resolve, reject).then(resolve).catch(reject);
             setTimeout(() => controller.abort(), wait);
         });
     }
 
-    static cleanObject(obj) {
+    static cleanObject(obj = {}) {
         return Object.assign(Object.create(null), obj);
     }
 
-    static readFile(options = {}, native = {}) {
-        const { filePath, wait = 10 * 1000 } = options;
-        return Util.abort(() => readFile(filePath, { encoding: 'utf-8', ...native }), wait);
+    static readFile(options = {}, nativeOptions = {}) {
+        const { filePath, wait } = options;
+        return Util.abort(() => readFile(filePath, { encoding: 'utf-8', ...nativeOptions }), wait);
     }
 
-    static writeFile(options = {}, native = {}) {
-        const { filePath, data, wait = 10 * 1000 } = options;
-        return Util.abort(() => writeFile(filePath, data, { flag: 'w', ...native }), wait);
+    static writeFile(options = {}, nativeOptions = {}) {
+        const { filePath, data, wait } = options;
+        return Util.abort(() => writeFile(filePath, data, { flag: 'w', ...nativeOptions }), wait);
     }
 
-    static copyFile(options = {}, mode = 0) {
-        const { filePath, dist, wait = 10 * 1000 } = options;
-        return Util.abort(async () => {
-            const dirname = path.dirname(dist);
-            if (!existsSync(dirname)) await mkdir(dirname, { recursive: true });
-            return copyFile(filePath, dist, mode);
+    static copyFile(options = {}, nativeOptions = {}) {
+        const { filePath, dist, wait } = options;
+        const { mode = 0 } = nativeOptions;
+        const dirname = path.dirname(dist);
+        return Util.abort(() => {
+            return Util.dirExists({ dir: dirname, wait }).then(async exists => {
+                if (!exists) await mkdir(dirname, { recursive: true });
+                return copyFile(filePath, dist, mode);
+            });
         }, wait);
     }
 
-    static dirContent(dir) {
-        return readdir(path.resolve(dir), { withFileTypes: true }).then(dirents => [
-            dirents.filter(dirent => dirent.isDirectory()).map(dirent => dirent.name),
-            dirents.filter(dirent => dirent.isFile()).map(dirent => dirent.name),
-        ]);
+    static dirContent(options = {}, nativeOptions = {}) {
+        const { dir, wait } = options;
+        return Util.abort(() => {
+            return readdir(path.resolve(dir), { withFileTypes: true, ...nativeOptions }).then(dirents => [
+                dirents.filter(dirent => dirent.isDirectory()).map(dirent => dirent.name),
+                dirents.filter(dirent => dirent.isFile()).map(dirent => dirent.name),
+            ]);
+        }, wait);
     }
 
-    static async resolveGamePath(dir, custom = ['_retail_', '_ptr_', '_classic_']) {
-        const [folders] = await Util.dirContent(path.resolve(dir));
-        const prefix = Array.isArray(custom) ? folders.find(f => custom.includes(f)) : folders.find(f => f === custom);
-        if (prefix) return path.join(dir, prefix);
+    static dirExists(options = {}, nativeOptions = {}) {
+        const { dir, wait } = options;
+        const { mode } = nativeOptions;
+        return Util.abort((resolve, reject) => {
+            return access(dir, mode).then(() => resolve(true)).catch(e => {
+                return e.code === 'ENOENT' ? resolve(false) : reject(e);
+            });
+        }, wait);
+    }
+
+    static async resolveGamePath(dir, subs = ['_retail_', '_ptr_', '_classic_']) {
+        const [folders] = await Util.dirContent({ dir });
+        const sub = Array.isArray(subs) ? folders.find(f => subs.includes(f)) : folders.find(f => f === subs);
+        if (sub) return path.join(dir, sub);
         return path.resolve(dir);
     }
 
