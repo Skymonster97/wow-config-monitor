@@ -4,7 +4,7 @@ class Line {
     constructor(content) {
         this.content = content;
 
-        const pattern = String.raw `(?<command>\w+)\s(?<key>\w+)\s"(?<value>[^"]+)"`;
+        const pattern = String.raw `(?<command>\w+)\s(?<key>\w+)\s"(?<value>([^"]+)?)"`;
         const data = new RegExp(pattern).exec(content);
 
         this.parsed = {
