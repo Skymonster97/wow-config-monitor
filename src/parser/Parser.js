@@ -24,12 +24,12 @@ class Parser {
                 if (!Object.is(oldVal, value)) {
                     line.parsed.value = value;
                     // eslint-disable-next-line no-console
-                    console.debug(`[${this.name}] - Prop restored ${_u(_cb(key))} ${_u(_r(oldVal))} -> ${_u(_g(value))}`);
+                    console.debug(`[${this.name}] - Prop restored ${_u(_cb(key))} "${_u(_r(oldVal))}" -> "${_u(_g(value))}"`);
                 }
             } else {
                 lines.push(Line.construct('SET', key, value));
                 // eslint-disable-next-line no-console
-                console.debug(`[${this.name}] - Prop added ${_u(_cb(key))} ${_u(_g(value))}`);
+                console.debug(`[${this.name}] - Prop added ${_u(_cb(key))} "${_u(_g(value))}"`);
             }
         });
 
