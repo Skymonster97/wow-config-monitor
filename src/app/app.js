@@ -105,7 +105,7 @@ const listen = profile => {
     const profilesPath = path.join(process.appRoot, fileName);
     const profiles = safeRequire(profilesPath);
 
-    if (!profiles || profiles?.length === 0) {
+    if (!profiles || (Array.isArray(profiles) && profiles.length === 0)) {
         // eslint-disable-next-line no-console
         console.warn('No profiles found; Running in listen only mode');
         return listen({ ...defaultProfile, name: 'GLOBAL' });
