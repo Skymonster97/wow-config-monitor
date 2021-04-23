@@ -28,7 +28,7 @@ class Util {
             const controller = new AbortController();
             const timeout = new Error(`Timeout:${wait}`);
             controller.signal.addEventListener('abort', () => reject(timeout));
-            fn(resolve, reject).then(resolve).catch(reject);
+            Promise.resolve(fn(resolve, reject)).then(resolve).catch(reject);
             setTimeout(() => controller.abort(), wait);
         });
     }
