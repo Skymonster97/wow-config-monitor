@@ -18,7 +18,7 @@ class Logger {
         Reflect.defineProperty(this, 'types', {
             value: Object.assign(types, Object.fromEntries(
                 Object.entries(levels).filter(([key]) => key in types).map(([key, value]) => {
-                    return [key, { enabled: Boolean(value), color: types[key].color }];
+                    return [key, { enabled: !!value, color: types[key].color }];
                 }),
             )),
         });
