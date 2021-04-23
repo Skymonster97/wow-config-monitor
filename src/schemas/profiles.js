@@ -25,6 +25,9 @@ const profile = Joi.object({
                 .default(false),
         })
         .default({}),
+    kill: Joi
+        .boolean()
+        .default(false),
     directory: Joi
         .string()
         .allow('')
@@ -51,6 +54,7 @@ const defaultProfile = {
         hidden: false,
         start: true,
     },
+    kill: false,
     directory: null,
     executables: ['Wow.exe', 'Wow-64.exe'],
     cvars: {},

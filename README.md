@@ -28,6 +28,7 @@ Set up your profile(s) by filling file with data.
   {
     "name": "Legion",
     "directory": "D:/Games/World of Warcraft/Legion",
+    "kill": false,
     "launcher": {
       "path": "D:/Games/World of Warcraft/Legion/CustomLauncher.exe",
       "args": ["--custom-argument"],
@@ -65,6 +66,8 @@ Set up your profile(s) by filling file with data.
   > If provided, must be an actual file name of the game, not a launcher that starts `Wow.exe`.\
   > File names `Wow.exe` and `Wow-64.exe` are used by default.
 - **cvars** - A list of variables and their values, that are needs to be restored (optional)
+- **kill** - Whether close application after closing the game or not (optional)
+  - > Not recommended if you have multiple profiles set up
 
 Open application to apply your settings, and keep it open, before closing the game.\
 Provided variables will be restored when application starts, and when game closes.

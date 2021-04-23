@@ -21,6 +21,7 @@ const {
     dirExists,
     fileExists,
     execFile,
+    wait,
 } = require('../util/Util.js');
 
 const {
@@ -50,7 +51,9 @@ const createProifle = async (index, data) => {
 
     const cvars = data.cvars ?? defaultProfile.cvars;
 
-    return { name, launcher, directory, executables, cvars };
+    const kill = data.kill ?? defaultProfile.kill;
+
+    return { name, launcher, kill, directory, executables, cvars };
 };
 
 const checkConfig = async (profile, parser, configPath) => {
@@ -112,6 +115,12 @@ const listen = profile => {
                 : path.join(path.dirname(processData.bin), 'WTF', 'Config.wtf');
 
             await checkConfig(profile, parser, configPath);
+
+            if (profile.kill) {
+                monitor.stop();
+                // eslint-disable-next-line node/no-process-exit
+                await wait(2000).then(() => process.exit(0));
+            }
         }
     });
 
