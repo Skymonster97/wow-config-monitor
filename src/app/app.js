@@ -34,13 +34,6 @@ const { underline: _u, cyanBright: _cb } = color;
 const createProifle = async (index, data) => {
     const name = data.name ? `${index}:${data.name}` : index;
 
-    const launcher = {
-        path: data.launcher?.path ?? defaultProfile.launcher.path,
-        args: data.launcher?.args ?? defaultProfile.launcher.args,
-        hidden: data.launcher?.hidden ?? defaultProfile.launcher.hidden,
-        start: data.launcher?.start ?? defaultProfile.launcher.start,
-    };
-
     const directory = data.directory
         ? await resolveGamePath(data.directory)
         : defaultProfile.directory;
@@ -49,11 +42,17 @@ const createProifle = async (index, data) => {
         ? data.executables
         : defaultProfile.executables;
 
-    const cvars = data.cvars ?? defaultProfile.cvars;
+    const launcher = {
+        path: data.launcher?.path ?? defaultProfile.launcher.path,
+        args: data.launcher?.args ?? defaultProfile.launcher.args,
+        hidden: data.launcher?.hidden ?? defaultProfile.launcher.hidden,
+        start: data.launcher?.start ?? defaultProfile.launcher.start,
+    };
 
     const kill = data.kill ?? defaultProfile.kill;
+    const cvars = data.cvars ?? defaultProfile.cvars;
 
-    return { name, launcher, kill, directory, executables, cvars };
+    return { name, directory, executables, launcher, kill, cvars };
 };
 
 const checkConfig = async (profile, parser, configPath) => {

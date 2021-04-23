@@ -7,6 +7,10 @@ const profile = Joi.object({
         .string()
         .allow('')
         .default(''),
+    directory: Joi
+        .string()
+        .allow('')
+        .default(''),
     launcher: Joi
         .object({
             path: Joi
@@ -25,17 +29,13 @@ const profile = Joi.object({
                 .default(false),
         })
         .default({}),
-    kill: Joi
-        .boolean()
-        .default(false),
-    directory: Joi
-        .string()
-        .allow('')
-        .default(''),
     executables: Joi
         .array()
         .items(Joi.string())
         .default([]),
+    kill: Joi
+        .boolean()
+        .default(false),
     cvars: Joi
         .object()
         .pattern(Joi.string(), Joi.string().allow(''))
@@ -48,6 +48,11 @@ const profiles = Joi
 
 const defaultProfile = {
     name: null,
+    directory: null,
+    executables: [
+        'Wow.exe',
+        'Wow-64.exe',
+    ],
     launcher: {
         path: null,
         args: [],
@@ -55,8 +60,6 @@ const defaultProfile = {
         start: true,
     },
     kill: false,
-    directory: null,
-    executables: ['Wow.exe', 'Wow-64.exe'],
     cvars: {},
 };
 
