@@ -14,7 +14,7 @@ const profile = Joi.object({
     executables: Joi
         .array()
         .items(Joi.string())
-        .default(['Wow.exe', 'Wow-64.exe']),
+        .default([]),
     cvars: Joi
         .object()
         .pattern(Joi.string(), Joi.string().allow(''))
