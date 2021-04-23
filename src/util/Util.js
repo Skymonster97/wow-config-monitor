@@ -2,7 +2,7 @@
 
 const { execFile } = require('child_process');
 const { promises } = require('fs');
-const { readFile, readdir, copyFile, mkdir, writeFile, access } = promises;
+const { readFile, readdir, copyFile, mkdir, writeFile, stat, access } = promises;
 const path = require('path');
 const AbortController = require('node-abort-controller');
 
@@ -83,9 +83,9 @@ class Util {
         const { dir, wait } = options;
         const { mode } = nativeOptions;
         return Util.abort((resolve, reject) => {
-            return access(dir, mode).then(() => resolve(true)).catch(e => {
-                return e.code === 'ENOENT' ? resolve(false) : reject(e);
-            });
+            return access(dir, mode)
+                .then(async () => resolve((await stat(dir)).isDirectory()))
+                .catch(e => e.code === 'ENOENT' ? resolve(false) : reject(e));
         }, wait);
     }
 
