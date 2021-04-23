@@ -13,6 +13,7 @@ Use at your own risk.
 - [x] Supports multiple game instances
 - [x] Supports both game folder structures <a id="dir"></a>
 - [x] Supports custom game executable names <a id="exec"></a>
+- [x] Supports custom game launcher <a id="launcher"></a>
 
 ### Usage
 
@@ -21,16 +22,22 @@ Content of the file must be an array of objects.\
 Set up your profile(s) by filling file with data.
 
 #### An example
-
+<!-- https://devdocs.io/node~14_lts/child_process#child_process_child_process_execfile_file_args_options_callback -->
 ```json
 [
   {
     "name": "Legion",
-    "directory": "D:\\Games\\World of Warcraft\\Legion",
+    "directory": "D:/Games/World of Warcraft/Legion",
+    "launcher": {
+      "path": "D:/Games/World of Warcraft/Legion/CustomLauncher.exe",
+      "args": ["--custom-argument"],
+      "hidden": false,
+      "start": true
+    },
     "executables": [
       "Wow.exe",
       "Wow-64.exe",
-      "custom-launcher.exe"
+      "WoW-ServerName.exe"
     ],
     "cvars": {
       "gxRefresh": "120",
@@ -48,10 +55,15 @@ Set up your profile(s) by filling file with data.
 ```
 
 - **name** - Name of the profile (optional)
-- **directory** - Path to the game directory (optional) <a href="#dir"><sup>[2]</sup></a>
-- **executables** - A list of process names to look for (optional) <a href="#exec"><sup>[3]</sup></a>
-  - `Wow.exe` and `Wow-64.exe` are used by default
-  - Must be an actual file name of the game, not a launcher that starts `Wow.exe`
+- **launcher** - Options for custom launcher (optional) <a href="#launcher"><sup>[2]</sup></a>
+  - **path** - Path to the launcher executable (optional)
+  - **args** - Command line arguments to pass to the launcher (optional)
+  - **hidden** - Whether hide launcher or not (optional)
+  - **start** - Whether start launcher or not (optional)
+- **directory** - Path to the game directory (optional) <a href="#dir"><sup>[3]</sup></a>
+- **executables** - A list of process names to look for (optional) <a href="#exec"><sup>[4]</sup></a>
+  > If provided, must be an actual file name of the game, not a launcher that starts `Wow.exe`.\
+  > File names `Wow.exe` and `Wow-64.exe` are used by default.
 - **cvars** - A list of variables and their values, that are needs to be restored (optional)
 
 Open application to apply your settings, and keep it open, before closing the game.\
@@ -60,9 +72,9 @@ Provided variables will be restored when application starts, and when game close
 ### How to build
 
 > Requires
-> **Git** <a href="#Git"><sup>[4]</sup></a>,
-> **Node.js** <a href="#Node.js"><sup>[5]</sup></a> and
-> **Yarn** <a href="#Yarn"><sup>[6]</sup></a> installed
+> **Git** <a href="#Git"><sup>[5]</sup></a>,
+> **Node.js** <a href="#Node.js"><sup>[6]</sup></a> and
+> **Yarn** <a href="#Yarn"><sup>[7]</sup></a> installed
 
 1. `git clone https://github.com/Skymonster97/wow-config-monitor`
 2. `cd wow-config-monitor`
