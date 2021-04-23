@@ -89,6 +89,16 @@ class Util {
         }, wait);
     }
 
+    static fileExists(options = {}, nativeOptions = {}) {
+        const { dir, wait } = options;
+        const { mode } = nativeOptions;
+        return Util.abort((resolve, reject) => {
+            return access(dir, mode)
+                .then(async () => resolve((await stat(dir)).isFile()))
+                .catch(e => e.code === 'ENOENT' ? resolve(false) : reject(e));
+        }, wait);
+    }
+
     static async resolveGamePath(dir, subs = ['_retail_', '_ptr_', '_classic_']) {
         const [folders] = await Util.dirContent({ dir });
         const sub = Array.isArray(subs) ? folders.find(f => subs.includes(f)) : folders.find(f => f === subs);
