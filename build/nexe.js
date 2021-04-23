@@ -20,7 +20,7 @@ const dist = path.join(root, 'build', 'dist');
     await copyFile({
         filePath: path.join(root, 'src', 'app', fileName),
         dist: path.join(dist, fileName),
-    }, fs.constants.COPYFILE_EXCL).catch(error => {
+    }, { mode: fs.constants.COPYFILE_EXCL }).catch(error => {
         if (error.code === 'EEXIST') {
             // eslint-disable-next-line no-console
             console.log(error.message);
