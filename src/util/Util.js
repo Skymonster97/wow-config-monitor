@@ -1,5 +1,6 @@
 'use strict';
 
+const { execFile } = require('child_process');
 const { promises } = require('fs');
 const { readFile, readdir, copyFile, mkdir, writeFile, access } = promises;
 const path = require('path');
@@ -35,6 +36,15 @@ class Util {
 
     static cleanObject(obj = {}) {
         return Object.assign(Object.create(null), obj);
+    }
+
+    static execFile(options = {}, nativeOptions = {}) {
+        const { file, args = [], wait } = options;
+        return Util.abort((resolve, reject) => {
+            execFile(file, args, nativeOptions, error => {
+                return error ? reject(error) : resolve();
+            });
+        }, wait);
     }
 
     static readFile(options = {}, nativeOptions = {}) {

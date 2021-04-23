@@ -12,13 +12,32 @@ const path = require('path');
 const color = require('colorette');
 const Parser = require('../parser/Parser.js');
 const Monitor = require('../monitor/Monitor.js');
-const { readFile, writeFile, resolveGamePath, safeRequire, dirExists } = require('../util/Util.js');
-const { schema, defaultProfile } = require('../schemas/profiles.js');
+
+const {
+    readFile,
+    writeFile,
+    resolveGamePath,
+    safeRequire,
+    dirExists,
+    execFile,
+} = require('../util/Util.js');
+
+const {
+    schema,
+    defaultProfile,
+} = require('../schemas/profiles.js');
 
 const { underline: _u, cyanBright: _cb } = color;
 
 const createProifle = async (index, data) => {
     const name = data.name ? `${index}:${data.name}` : index;
+
+    const launcher = {
+        path: data.launcher?.path ?? defaultProfile.launcher.path,
+        args: data.launcher?.args ?? defaultProfile.launcher.args,
+        options: data.launcher?.options ?? defaultProfile.launcher.options,
+        start: data.launcher?.start ?? defaultProfile.launcher.start,
+    };
 
     const directory = data.directory
         ? await resolveGamePath(data.directory)
@@ -28,9 +47,9 @@ const createProifle = async (index, data) => {
         ? data.executables
         : defaultProfile.executables;
 
-    const cvars = data.cvars || defaultProfile.cvars;
+    const cvars = data.cvars ?? defaultProfile.cvars;
 
-    return { name, directory, executables, cvars };
+    return { name, launcher, directory, executables, cvars };
 };
 
 const checkConfig = async (profile, parser, configPath) => {
@@ -123,17 +142,27 @@ const listen = profile => {
         if (Object.keys(data).length > 0) {
             if (data.directory) {
                 if (await dirExists({ dir: data.directory })) {
-                    const dir = path.normalize(data.directory);
-                    if (used.has(dir)) {
+                    const gamePath = path.normalize(data.directory);
+                    if (used.has(gamePath)) {
                         counter++;
                         // eslint-disable-next-line no-console
                         console.warn(`Profile [${index}] skipped; Duplicate directory provided`);
                     } else {
-                        used.add(dir);
+                        used.add(gamePath);
                         const profile = await createProifle(index, data);
                         const { monitor, parser } = await listen(profile);
                         const configPath = path.join(monitor.dir, 'WTF', 'Config.wtf');
                         await checkConfig(profile, parser, configPath);
+
+                        if (profile.launcher.start && profile.launcher.path) {
+                            const { dir, base } = path.parse(profile.launcher.path);
+                            // eslint-disable-next-line no-console
+                            console.info(`[${profile.name}] - Starting "${base}"`);
+                            await execFile(
+                                { file: base, args: profile.launcher.args },
+                                { cwd: dir, ...profile.launcher.options },
+                            );
+                        }
                     }
                 } else {
                     counter++;
