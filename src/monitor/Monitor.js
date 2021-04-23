@@ -10,25 +10,27 @@ class Monitor extends EventEmitter {
         super();
 
         this.names = new RegExp(names.length > 0 ? `^${names.map(n => `(${n})`).join('|')}$` : '', 'i');
-        this.dir = dir ? path.normalize(dir) : null;
+        this.dir = dir ? path.normalize(dir).toLowerCase() : null;
         this.active = new Collection();
         this.interval = null;
     }
 
     async check() {
         const list = await findProcess('name', this.names);
-        const matches = this.dir ? list.filter(data => path.dirname(data.bin) === this.dir) : list;
+        const matches = this.dir ? list.filter(data => path.dirname(data.bin).toLowerCase() === this.dir) : list;
         const closed = this.active.filter(entry => !matches.some(data => data.pid === entry.pid));
         const uncached = matches.filter(data => !this.active.has(data.pid));
 
         uncached.forEach(data => {
-            this.active.set(data.pid, data);
-            this.emit('detect', data);
+            const newData = { ...data, bin: data.bin.toLowerCase() };
+            this.active.set(data.pid, newData);
+            this.emit('detect', newData);
         });
 
         closed.each(entry => {
+            const newData = { ...entry, bin: entry.bin.toLowerCase() };
             this.active.delete(entry.pid);
-            this.emit('kill', entry);
+            this.emit('kill', newData);
         });
     }
 
