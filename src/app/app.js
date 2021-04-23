@@ -19,6 +19,7 @@ const {
     resolveGamePath,
     safeRequire,
     dirExists,
+    fileExists,
     execFile,
 } = require('../util/Util.js');
 
@@ -35,7 +36,7 @@ const createProifle = async (index, data) => {
     const launcher = {
         path: data.launcher?.path ?? defaultProfile.launcher.path,
         args: data.launcher?.args ?? defaultProfile.launcher.args,
-        options: data.launcher?.options ?? defaultProfile.launcher.options,
+        hidden: data.launcher?.hidden ?? defaultProfile.launcher.hidden,
         start: data.launcher?.start ?? defaultProfile.launcher.start,
     };
 
@@ -150,26 +151,39 @@ const listen = profile => {
                     } else {
                         used.add(gamePath);
                         const profile = await createProifle(index, data);
-                        const { monitor, parser } = await listen(profile);
-                        const configPath = path.join(monitor.dir, 'WTF', 'Config.wtf');
-                        await checkConfig(profile, parser, configPath);
+
+                        const start = async () => {
+                            const { monitor, parser } = await listen(profile);
+                            const configPath = path.join(monitor.dir, 'WTF', 'Config.wtf');
+                            await checkConfig(profile, parser, configPath);
+                        };
 
                         if (profile.launcher.start && profile.launcher.path) {
-                            const { dir, base } = path.parse(profile.launcher.path);
-                            // eslint-disable-next-line no-console
-                            console.info(`[${profile.name}] - Starting "${base}"`);
-                            await execFile(
-                                { file: base, args: profile.launcher.args },
-                                { cwd: dir, ...profile.launcher.options },
-                            );
+                            if (await fileExists({ dir: profile.launcher.path })) {
+                                await start();
+
+                                const { dir, base } = path.parse(profile.launcher.path);
+                                // eslint-disable-next-line no-console
+                                console.info(`[${profile.name}] - Starting "${base}"`);
+                                await execFile(
+                                    { fileName: base, args: profile.launcher.args },
+                                    { cwd: dir, windowsHide: profile.launcher.hidden },
+                                );
+                            } else {
+                                counter++;
+                                // eslint-disable-next-line no-console
+                                console.warn(`Profile [${index}] skipped; Invalid launcher path provided`);
+                            }
+                        } else {
+                            await start();
                         }
                     }
                 } else {
                     counter++;
                     // eslint-disable-next-line no-console
-                    console.warn(`Profile [${index}] skipped; Invalid directory provided`);
+                    console.warn(`Profile [${index}] skipped; Invalid game directory provided`);
                 }
-            } else if (data.cvars ? Object.keys(data.cvars).length > 0 : false) {
+            } else if (data.cvars ? Object.keys(data.cvars).length === 0 : false) {
                 counter++;
                 // eslint-disable-next-line no-console
                 console.warn(`Profile [${index}] skipped; No cvars provided`);
@@ -183,14 +197,14 @@ const listen = profile => {
             // eslint-disable-next-line no-console
             console.warn(`Profile [${index}] skipped; Empty profile provided`);
         }
-
-        if (counter === profiles.length) {
-            // eslint-disable-next-line no-console
-            console.warn('No valid profiles found; Running in listen only mode');
-            used.clear();
-            return listen({ ...defaultProfile, name: 'GLOBAL' });
-        }
         /* eslint-enable no-await-in-loop */
+    }
+
+    if (counter === profiles.length) {
+        // eslint-disable-next-line no-console
+        console.warn('No valid profiles found; Running in listen only mode');
+        used.clear();
+        return listen({ ...defaultProfile, name: 'GLOBAL' });
     }
 
     return null;
