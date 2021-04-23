@@ -39,9 +39,9 @@ class Util {
     }
 
     static execFile(options = {}, nativeOptions = {}) {
-        const { file, args = [], wait } = options;
+        const { fileName, args = [], wait } = options;
         return Util.abort((resolve, reject) => {
-            execFile(file, args, nativeOptions, error => {
+            execFile(fileName, args, nativeOptions, error => {
                 return error ? reject(error) : resolve();
             });
         }, wait);
@@ -72,7 +72,7 @@ class Util {
     static dirContent(options = {}, nativeOptions = {}) {
         const { dir, wait } = options;
         return Util.abort(() => {
-            return readdir(path.resolve(dir), { withFileTypes: true, ...nativeOptions }).then(dirents => [
+            return readdir(dir, { withFileTypes: true, ...nativeOptions }).then(dirents => [
                 dirents.filter(dirent => dirent.isDirectory()).map(dirent => dirent.name),
                 dirents.filter(dirent => dirent.isFile()).map(dirent => dirent.name),
             ]);
