@@ -106,6 +106,10 @@ class Util {
         return path.resolve(dir);
     }
 
+    static wait(time = 0) {
+        return new Promise(resolve => setTimeout(resolve, time));
+    }
+
     // eslint-disable-next-line require-await
     static async keepAlive() {
         // eslint-disable-next-line no-bitwise
