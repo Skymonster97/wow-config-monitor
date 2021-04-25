@@ -16,21 +16,21 @@ class Monitor extends EventEmitter {
     }
 
     async check() {
-        const list = await findProcess('name', this.names);
-        const matches = this.dir ? list.filter(data => path.dirname(data.bin).toLowerCase() === this.dir) : list;
+        const list = (await findProcess('name', this.names))
+            .map(data => ({ ...data, bin: data.bin.toLowerCase() }));
+
+        const matches = this.dir ? list.filter(data => path.dirname(data.bin) === this.dir) : list;
         const closed = this.active.filter(entry => !matches.some(data => data.pid === entry.pid));
         const uncached = matches.filter(data => !this.active.has(data.pid));
 
         uncached.forEach(data => {
-            const newData = { ...data, bin: data.bin.toLowerCase() };
-            this.active.set(data.pid, newData);
-            this.emit('detect', newData);
+            this.active.set(data.pid, data);
+            this.emit('detect', data);
         });
 
         closed.each(entry => {
-            const newData = { ...entry, bin: entry.bin.toLowerCase() };
             this.active.delete(entry.pid);
-            this.emit('kill', newData);
+            this.emit('kill', entry);
         });
     }
 
