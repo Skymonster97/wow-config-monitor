@@ -15,6 +15,10 @@ class Monitor extends EventEmitter {
         this.interval = null;
     }
 
+    get started() {
+        return !!this.interval;
+    }
+
     async check() {
         const list = (await findProcess('name', this.names))
             .map(data => ({ ...data, bin: data.bin.toLowerCase(), ts: Date.now() }));
@@ -35,7 +39,7 @@ class Monitor extends EventEmitter {
     }
 
     start() {
-        if (this.interval) {
+        if (this.started) {
             throw new Error('Monitor already started');
         }
 
@@ -44,7 +48,7 @@ class Monitor extends EventEmitter {
     }
 
     stop() {
-        if (!this.interval) {
+        if (!this.started) {
             throw new Error('Monitor already stopped');
         }
 
