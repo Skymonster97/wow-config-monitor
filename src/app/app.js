@@ -63,9 +63,7 @@ const checkConfig = async (profile, parser, configPath) => {
         const parsed = parser.parse(configData);
 
         const changed = Object.entries(profile.cvars).some(([key, value]) => {
-            if (!parsed.some(line => line.parsed.key === key)) return true;
-            if (!parsed.some(line => line.parsed.value === value)) return true;
-            return false;
+            return !parsed.some(line => line.parsed.key === key && line.parsed.value === value);
         });
 
         if (changed) {
