@@ -17,7 +17,7 @@ class Monitor extends EventEmitter {
 
     async check() {
         const list = (await findProcess('name', this.names))
-            .map(data => ({ ...data, bin: data.bin.toLowerCase() }));
+            .map(data => ({ ...data, bin: data.bin.toLowerCase(), ts: Date.now() }));
 
         const matches = this.dir ? list.filter(data => path.dirname(data.bin) === this.dir) : list;
         const closed = this.active.filter(entry => !matches.some(data => data.pid === entry.pid));

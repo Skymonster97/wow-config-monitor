@@ -105,7 +105,7 @@ const listen = profile => {
         // eslint-disable-next-line no-console
         console.info(`[${profile.name}] - Process [${processData.pid}] ${_u(_cb(processData.name))} closed`);
 
-        if (monitor.active.some(entry => entry.bin === processData.bin)) {
+        if (monitor.active.some(entry => entry.bin === processData.bin && entry.ts < processData.ts)) {
             // eslint-disable-next-line no-console
             console.debug(`[${profile.name}] - No changes are made; Process is still running under the same directory`);
         } else {
