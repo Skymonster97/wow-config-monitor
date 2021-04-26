@@ -28,11 +28,8 @@ Set up your profile(s) by filling file with data.
   {
     "name": "Legion",
     "directory": "D:/Games/World of Warcraft/Legion",
-    "kill": false,
     "launcher": {
       "path": "D:/Games/World of Warcraft/Legion/CustomLauncher.exe",
-      "args": ["--custom-argument"],
-      "hidden": false,
       "start": true
     },
     "executables": [
