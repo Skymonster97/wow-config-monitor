@@ -22,7 +22,7 @@ Content of the file must be an array of objects.\
 Set up your profile(s) by filling file with data.
 
 #### An example
-<!-- https://devdocs.io/node~14_lts/child_process#child_process_child_process_execfile_file_args_options_callback -->
+
 ```json
 [
   {
@@ -71,10 +71,15 @@ Provided variables will be restored when application starts, and when game close
 
 ### How to build
 
-> Requires
-> **Git** <a href="#Git"><sup>[5]</sup></a>,
-> **Node.js** <a href="#Node.js"><sup>[6]</sup></a> and
-> **Yarn** <a href="#Yarn"><sup>[7]</sup></a> installed
+> Requires next packages to be installed
+
+1. **Git** <a href="#Git"><sup>[5]</sup></a>
+2. **Node.js** <a href="#Node.js"><sup>[6]</sup></a>
+3. **Yarn** <a href="#Yarn"><sup>[7]</sup></a>
+4. **NASM** <a href="#NASM"><sup>[8]</sup></a>
+5. **windows-build-tools** <a href="#WBT"><sup>[9]</sup></a>
+
+> Build process via CLI
 
 1. `git clone https://github.com/Skymonster97/wow-config-monitor`
 2. `cd wow-config-monitor`
@@ -88,6 +93,8 @@ Provided variables will be restored when application starts, and when game close
 - [Git](https://git-scm.com/) <a id="Git"></a>
 - [Node.js](https://nodejs.org/en/) <a id="Node.js"></a>
 - [Yarn](https://yarnpkg.com/) <a id="Yarn"></a>
+- [NASM](https://www.nasm.us/) <a id="NASM"></a>
+- [windows-build-tools](https://yarnpkg.com/package/windows-build-tools) <a id="WBT"></a>
 - [JSON](https://developer.mozilla.org/en-US/docs/Glossary/JSON) <a id="JSON"></a>
 
 ## License
