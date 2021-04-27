@@ -159,7 +159,7 @@ const listen = profile => {
                         const profile = await createProifle(index, data);
 
                         const start = async () => {
-                            const { monitor, parser } = await listen(profile);
+                            const { monitor, parser } = listen(profile);
                             const configPath = path.join(monitor.dir, 'WTF', 'Config.wtf');
                             await checkConfig(profile, parser, configPath);
                         };
