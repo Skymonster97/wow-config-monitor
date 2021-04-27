@@ -129,9 +129,9 @@ const listen = profile => {
 (async () => {
     const fileName = 'wow.profiles.json';
     const profilesPath = path.join(process.appRoot, fileName);
-    const profiles = safeRequire(profilesPath);
+    const profiles = safeRequire(profilesPath) || [];
 
-    if (!profiles || (Array.isArray(profiles) && profiles.length === 0)) {
+    if (profiles.length === 0) {
         // eslint-disable-next-line no-console
         console.warn('No profiles found; Running in listen only mode');
         return listen({ ...defaultProfile, name: 'GLOBAL' });
