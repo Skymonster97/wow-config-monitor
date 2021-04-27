@@ -1,10 +1,11 @@
 'use strict';
 
+const { promisify } = require('util');
 const { execFile } = require('child_process');
-const { promises } = require('fs');
-const { readFile, readdir, copyFile, mkdir, writeFile, stat, access } = promises;
+const { promises: { readFile, readdir, copyFile, mkdir, writeFile, stat, access } } = require('fs');
 const path = require('path');
-const AbortController = require('node-abort-controller');
+
+const execFileAsync = promisify(execFile);
 
 class Util {
     static newLine = /\r\n|\r|\n/;
@@ -17,21 +18,9 @@ class Util {
         try {
             return require(id);
         } catch (error) {
-            if (error.code === 'MODULE_NOT_FOUND') {
-                return null;
-            }
+            if (error.code === 'MODULE_NOT_FOUND') return null;
             throw error;
         }
-    }
-
-    static abort(fn, wait = 10 * 1000) {
-        return new Promise((resolve, reject) => {
-            const controller = new AbortController();
-            const timeout = new Error(`Timeout:${wait}`);
-            controller.signal.addEventListener('abort', () => reject(timeout));
-            Promise.resolve(fn(resolve, reject)).then(resolve).catch(reject);
-            setTimeout(() => controller.abort(), wait);
-        });
     }
 
     static cleanObject(obj = {}) {
@@ -39,69 +28,58 @@ class Util {
     }
 
     static execFile(options = {}, nativeOptions = {}) {
-        const { fileName, args = [], wait } = options;
-        return Util.abort((resolve, reject) => {
-            execFile(fileName, args, nativeOptions, error => {
-                return error ? reject(error) : resolve();
-            });
-        }, wait);
+        const { fileName, args = [] } = options;
+        return execFileAsync(fileName, args, nativeOptions);
     }
 
     static readFile(options = {}, nativeOptions = {}) {
-        const { filePath, wait } = options;
-        return Util.abort(() => readFile(filePath, { encoding: 'utf-8', ...nativeOptions }), wait);
+        const { filePath } = options;
+        return readFile(filePath, { encoding: 'utf-8', ...nativeOptions });
     }
 
     static writeFile(options = {}, nativeOptions = {}) {
-        const { filePath, data, wait } = options;
-        return Util.abort(() => writeFile(filePath, data, { flag: 'w', ...nativeOptions }), wait);
+        const { filePath, data } = options;
+        return writeFile(filePath, data, { flag: 'w', ...nativeOptions });
     }
 
-    static copyFile(options = {}, nativeOptions = {}) {
-        const { filePath, dist, wait } = options;
+    static async copyFile(options = {}, nativeOptions = {}) {
+        const { filePath, dist } = options;
         const { mode = 0 } = nativeOptions;
-        const dirname = path.dirname(dist);
-        return Util.abort(() => {
-            return Util.dirExists({ dir: dirname, wait }).then(async exists => {
-                if (!exists) await mkdir(dirname, { recursive: true });
-                return copyFile(filePath, dist, mode);
-            });
-        }, wait);
+        const dir = path.dirname(dist);
+        const exists = await Util.dirExists({ dir });
+        if (!exists) await mkdir(dir, { recursive: true });
+        return copyFile(filePath, dist, mode);
     }
 
-    static dirContent(options = {}, nativeOptions = {}) {
-        const { dir, wait } = options;
-        return Util.abort(() => {
-            return readdir(dir, { withFileTypes: true, ...nativeOptions }).then(dirents => [
-                dirents.filter(dirent => dirent.isDirectory()).map(dirent => dirent.name),
-                dirents.filter(dirent => dirent.isFile()).map(dirent => dirent.name),
-            ]);
-        }, wait);
+    static async dirContent(options = {}, nativeOptions = {}) {
+        const { dir } = options;
+        const dirents = await readdir(dir, { withFileTypes: true, ...nativeOptions });
+        const folders = dirents.filter(dirent => dirent.isDirectory()).map(dirent => dirent.name);
+        const files = dirents.filter(dirent => dirent.isFile()).map(dirent => dirent.name);
+        return { folders, files };
     }
 
     static dirExists(options = {}, nativeOptions = {}) {
-        const { dir, wait } = options;
+        const { dir } = options;
         const { mode } = nativeOptions;
-        return Util.abort((resolve, reject) => {
-            return access(dir, mode)
-                .then(async () => resolve((await stat(dir)).isDirectory()))
-                .catch(e => e.code === 'ENOENT' ? resolve(false) : reject(e));
-        }, wait);
+        return access(dir, mode)
+            .then(async () => (await stat(dir)).isDirectory())
+            .catch(e => e.code === 'ENOENT' ? false : e);
     }
 
     static fileExists(options = {}, nativeOptions = {}) {
-        const { dir, wait } = options;
+        const { dir } = options;
         const { mode } = nativeOptions;
-        return Util.abort((resolve, reject) => {
-            return access(dir, mode)
-                .then(async () => resolve((await stat(dir)).isFile()))
-                .catch(e => e.code === 'ENOENT' ? resolve(false) : reject(e));
-        }, wait);
+        return access(dir, mode)
+            .then(async () => (await stat(dir)).isFile())
+            .catch(e => e.code === 'ENOENT' ? false : e);
     }
 
     static async resolveGamePath(dir, subs = ['_retail_', '_ptr_', '_classic_']) {
-        const [folders] = await Util.dirContent({ dir });
-        const sub = Array.isArray(subs) ? folders.find(f => subs.includes(f)) : folders.find(f => f === subs);
+        const { folders } = await Util.dirContent({ dir });
+        const sub = Array.isArray(subs)
+            ? folders.find(f => subs.includes(f))
+            : folders.find(f => f === subs);
         if (sub) return path.join(dir, sub);
         return path.resolve(dir);
     }

@@ -30,8 +30,7 @@
     "colorette": "^1.2.2",
     "find-process": "Skymonster97/find-process#patch-1",
     "joi": "^17.4.0",
-    "moment": "^2.29.1",
-    "node-abort-controller": "^1.2.1"
+    "moment": "^2.29.1"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.13.14",
