@@ -129,7 +129,7 @@ const listen = profile => {
 (async () => {
     const fileName = 'wow.profiles.json';
     const profilesPath = path.join(process.appRoot, fileName);
-    const profiles = safeRequire(profilesPath) || [];
+    const profiles = safeRequire(profilesPath, []);
 
     if (profiles.length === 0) {
         // eslint-disable-next-line no-console

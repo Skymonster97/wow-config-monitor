@@ -14,11 +14,13 @@ class Util {
         throw new Error('Initialization is not allowed');
     }
 
-    static safeRequire(id) {
+    static safeRequire(...args) {
         try {
-            return require(id);
+            return require(args[0]);
         } catch (error) {
-            if (error.code === 'MODULE_NOT_FOUND') return null;
+            if (error.code === 'MODULE_NOT_FOUND') {
+                return args.length > 1 ? args[1] : null;
+            }
             throw error;
         }
     }
