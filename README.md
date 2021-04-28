@@ -29,8 +29,7 @@ Set up your profile(s) by filling file with data.
     "name": "Legion",
     "directory": "D:/Games/World of Warcraft/Legion",
     "launcher": {
-      "path": "D:/Games/World of Warcraft/Legion/CustomLauncher.exe",
-      "start": true
+      "path": "D:/Games/World of Warcraft/Legion/CustomLauncher.exe"
     },
     "executables": [
       "Wow.exe",
