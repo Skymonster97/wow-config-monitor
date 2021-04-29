@@ -4,15 +4,16 @@ const { Console } = require('console');
 const color = require('colorette');
 const moment = require('moment');
 const { cleanObject } = require('./Util.js');
+const { defaultLevels: dl } = require('../schemas/logger.js');
 
 class Logger {
     constructor(levels = {}, consoleOptions = {}) {
         const types = cleanObject({
-            debug: { enabled: false, color: 'gray' },
-            info: { enabled: true, color: 'blueBright' },
-            log: { enabled: true, color: 'green' },
-            warn: { enabled: true, color: 'yellow' },
-            error: { enabled: true, color: 'red' },
+            debug: { enabled: dl.debug, color: 'gray' },
+            info: { enabled: dl.info, color: 'blueBright' },
+            log: { enabled: dl.log, color: 'green' },
+            warn: { enabled: dl.warn, color: 'yellow' },
+            error: { enabled: dl.error, color: 'red' },
         });
 
         Reflect.defineProperty(this, 'types', {

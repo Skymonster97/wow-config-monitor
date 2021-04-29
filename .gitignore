@@ -37,4 +37,5 @@ package-lock.json
 
 # Project files
 build/dist/
+wcm.logger.json
 wcm.profiles.json

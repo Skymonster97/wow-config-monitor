@@ -16,19 +16,24 @@ const root = path.join(__dirname, '..');
 const dist = path.join(root, 'build', 'dist');
 
 (async () => {
-    const fileName = fileNames.profiles;
-
-    await copyFile({
-        filePath: path.join(root, 'src', 'app', fileName),
-        dist: path.join(dist, fileName),
-    }, { mode: fs.constants.COPYFILE_EXCL }).catch(error => {
+    const skip = error => {
         if (error.code === 'EEXIST') {
             // eslint-disable-next-line no-console
             console.log(error.message);
         } else {
             throw error;
         }
-    });
+    };
+
+    await copyFile({
+        filePath: path.join(root, 'src', 'app', fileNames.profiles),
+        dist: path.join(dist, fileNames.profiles),
+    }, { mode: fs.constants.COPYFILE_EXCL }).catch(skip);
+
+    await copyFile({
+        filePath: path.join(root, 'src', 'app', fileNames.logger),
+        dist: path.join(dist, fileNames.logger),
+    }, { mode: fs.constants.COPYFILE_EXCL }).catch(skip);
 
     await compile({
         cwd: root,
