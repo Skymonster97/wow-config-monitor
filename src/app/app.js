@@ -122,8 +122,6 @@ const listen = profile => {
         }
     });
 
-    monitor.start();
-
     return { parser, monitor };
 };
 
@@ -135,7 +133,9 @@ const listen = profile => {
     if (profiles.length === 0) {
         // eslint-disable-next-line no-console
         console.warn('No profiles found; Running in listen only mode');
-        return listen({ ...defaultProfile, name: 'GLOBAL' });
+        const { monitor } = listen({ ...defaultProfile, name: 'GLOBAL' });
+        monitor.start();
+        return;
     }
 
     await schema.validateAsync(profiles).catch(error => {
@@ -163,6 +163,7 @@ const listen = profile => {
                             const { monitor, parser } = listen(profile);
                             const configPath = path.join(monitor.dir, 'WTF', 'Config.wtf');
                             await checkConfig(profile, parser, configPath);
+                            monitor.start();
                         };
 
                         if (profile.launcher.start && profile.launcher.path) {
@@ -211,8 +212,7 @@ const listen = profile => {
         // eslint-disable-next-line no-console
         console.warn('No valid profiles found; Running in listen only mode');
         used.clear();
-        return listen({ ...defaultProfile, name: 'GLOBAL' });
+        const { monitor } = listen({ ...defaultProfile, name: 'GLOBAL' });
+        monitor.start();
     }
-
-    return null;
 })();
