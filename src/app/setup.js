@@ -22,7 +22,7 @@ module.exports = () => {
     logger.inject();
 
     if (env === 'production') {
-        process.title = `[ ${pkg.name} ]`;
+        process.title = `[ ${pkg.description.toUpperCase()} ]`;
 
         keepAlive();
     }
