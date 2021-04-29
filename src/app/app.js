@@ -26,7 +26,7 @@ const {
 } = require('../util/Util.js');
 
 const {
-    schema,
+    profilesSchema,
     defaultProfile,
 } = require('../schemas/profiles.js');
 
@@ -138,7 +138,7 @@ const listen = profile => {
         return;
     }
 
-    await schema.validateAsync(profiles).catch(error => {
+    await profilesSchema.validateAsync(profiles).catch(error => {
         throw error.details;
     });
 
