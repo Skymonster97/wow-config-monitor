@@ -17,7 +17,7 @@ Use at your own risk.
 
 ### Usage
 
-Create `wow.profiles.json` <a href="#JSON"><sup>[1]</sup></a> file in the same directory with an application.\
+Create `wcm.profiles.json` <a href="#JSON"><sup>[1]</sup></a> file in the same directory with an application.\
 Content of the file must be an array of objects.\
 Set up your profile(s) by filling file with data.
 

@@ -1,7 +1,7 @@
 'use strict';
 
 const fileNames = {
-    profiles: 'wow.profiles.json',
+    profiles: 'wcm.profiles.json',
 };
 
 module.exports = { fileNames };
