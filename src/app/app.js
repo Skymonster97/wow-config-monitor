@@ -12,6 +12,7 @@ const path = require('path');
 const color = require('colorette');
 const Parser = require('../parser/Parser.js');
 const Monitor = require('../monitor/Monitor.js');
+const { fileNames } = require('../util/Constants.js');
 
 const {
     readFile,
@@ -127,7 +128,7 @@ const listen = profile => {
 };
 
 (async () => {
-    const fileName = 'wow.profiles.json';
+    const fileName = fileNames.profiles;
     const profilesPath = path.join(process.appRoot, fileName);
     const profiles = safeRequire(profilesPath, []);
 

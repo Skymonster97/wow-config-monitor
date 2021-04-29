@@ -10,12 +10,13 @@ const path = require('path');
 const fs = require('fs');
 const { compile } = require('nexe');
 const { copyFile } = require('../src/util/Util.js');
+const { fileNames } = require('../src/util/Constants.js');
 
 const root = path.join(__dirname, '..');
 const dist = path.join(root, 'build', 'dist');
 
 (async () => {
-    const fileName = 'wow.profiles.json';
+    const fileName = fileNames.profiles;
 
     await copyFile({
         filePath: path.join(root, 'src', 'app', fileName),
