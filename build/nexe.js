@@ -34,7 +34,7 @@ const dist = path.join(root, 'build', 'dist');
         cwd: root,
         loglevel: 'verbose',
         input: './src/app/app.js',
-        output: './build/dist/app.exe',
+        output: `./build/dist/${fileNames.app}`,
         targets: [
             {
                 version: '14.16.1',
