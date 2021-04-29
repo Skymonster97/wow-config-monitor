@@ -37,4 +37,4 @@ package-lock.json
 
 # Project files
 build/dist/
-wow.profiles.json
+wcm.profiles.json
