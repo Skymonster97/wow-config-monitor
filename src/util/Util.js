@@ -14,15 +14,13 @@ class Util {
         throw new Error('Initialization is not allowed');
     }
 
-    static safeRequire(...args) {
-        try {
-            return require(args[0]);
-        } catch (error) {
-            if (error.code === 'MODULE_NOT_FOUND') {
-                return args.length > 1 ? args[1] : null;
-            }
-            throw error;
-        }
+    static wait(time = 0) {
+        return new Promise(resolve => setTimeout(resolve, time));
+    }
+
+    static async keepAlive() { // eslint-disable-line require-await
+        // eslint-disable-next-line no-bitwise
+        return setInterval(() => null, 1 << 30);
     }
 
     static cleanObject(obj = {}) {
@@ -77,14 +75,15 @@ class Util {
             .catch(e => e.code === 'ENOENT' ? false : e);
     }
 
-    static wait(time = 0) {
-        return new Promise(resolve => setTimeout(resolve, time));
-    }
-
-    // eslint-disable-next-line require-await
-    static async keepAlive() {
-        // eslint-disable-next-line no-bitwise
-        return setInterval(() => null, 1 << 30);
+    static safeRequire(...args) {
+        try {
+            return require(args[0]);
+        } catch (error) {
+            if (error.code === 'MODULE_NOT_FOUND') {
+                return args.length > 1 ? args[1] : null;
+            }
+            throw error;
+        }
     }
 }
 
