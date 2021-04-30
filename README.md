@@ -19,9 +19,10 @@ Use at your own risk.
 
 #### 1. Profiles
 
-Create `wcm.profiles.json` <a href="#JSON"><sup>[1]</sup></a> file in the same directory with an application.\
-Content of the file must be an array of objects.\
-Set up your profile(s) by filling file with data.
+To set up profile(s) create `wcm.profiles.json` <a href="#JSON"><sup>[1]</sup></a>
+file in the same directory with an application.\
+Then fill it with data.\
+Content of the file must be an array of objects.
 
 #### An example
 
@@ -74,9 +75,10 @@ Provided variables will be restored when application starts, and when game close
 
 > Gives an option to hide unwanted messages in console if needed
 
-Create `wcm.logger.json` <a href="#JSON"><sup>[1]</sup></a> file in the same directory with an application.\
-Content of the file must be an object.\
-Set up logger levels by filling file with data.
+To set up logger levels create `wcm.logger.json` <a href="#JSON"><sup>[5]</sup></a>
+file in the same directory with an application.\
+Then fill it with data.\
+Content of the file must be an object.
 
 #### An example with default preset
 
@@ -94,11 +96,11 @@ Set up logger levels by filling file with data.
 
 > Requires next packages to be installed
 
-1. **Git** <a href="#Git"><sup>[5]</sup></a>
-2. **Node.js** <a href="#Node.js"><sup>[6]</sup></a>
-3. **Yarn** <a href="#Yarn"><sup>[7]</sup></a>
-4. **NASM** <a href="#NASM"><sup>[8]</sup></a>
-5. **windows-build-tools** <a href="#WBT"><sup>[9]</sup></a>
+1. **Git** <a href="#Git"><sup>[6]</sup></a>
+2. **Node.js** <a href="#Node.js"><sup>[7]</sup></a>
+3. **Yarn** <a href="#Yarn"><sup>[8]</sup></a>
+4. **NASM** <a href="#NASM"><sup>[9]</sup></a>
+5. **windows-build-tools** <a href="#WBT"><sup>[10]</sup></a>
 
 > Build process via CLI
 
