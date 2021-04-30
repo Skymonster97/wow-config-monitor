@@ -19,7 +19,7 @@ Use at your own risk.
 
 #### 1. Profiles
 
-To set up profile(s) create `wcm.profiles.json` <a href="#JSON"><sup>[1]</sup></a>
+To set up profile(s), create `wcm.profiles.json` <a href="#JSON"><sup>[1]</sup></a>
 file in the same directory with an application.\
 Then fill it with data.\
 Content of the file must be an array of objects.
@@ -75,7 +75,7 @@ Provided variables will be restored when application starts, and when game close
 
 > Gives an option to hide unwanted messages in console if needed
 
-To set up logger levels create `wcm.logger.json` <a href="#JSON"><sup>[5]</sup></a>
+To set up logger levels, create `wcm.logger.json` <a href="#JSON"><sup>[5]</sup></a>
 file in the same directory with an application.\
 Then fill it with data.\
 Content of the file must be an object.
