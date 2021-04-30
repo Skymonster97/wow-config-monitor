@@ -77,15 +77,6 @@ class Util {
             .catch(e => e.code === 'ENOENT' ? false : e);
     }
 
-    static async resolveGamePath(dir, subs = ['_retail_', '_ptr_', '_classic_']) {
-        const { folders } = await Util.dirContent({ dir });
-        const sub = Array.isArray(subs)
-            ? folders.find(f => subs.includes(f))
-            : folders.find(f => f === subs);
-        if (sub) return path.join(dir, sub);
-        return path.resolve(dir);
-    }
-
     static wait(time = 0) {
         return new Promise(resolve => setTimeout(resolve, time));
     }

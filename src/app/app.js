@@ -17,7 +17,7 @@ const { fileNames } = require('../util/Constants.js');
 const {
     readFile,
     writeFile,
-    resolveGamePath,
+    dirContent,
     safeRequire,
     dirExists,
     fileExists,
@@ -31,6 +31,15 @@ const {
 } = require('../schemas/profiles.js');
 
 const { underline: _u, cyanBright: _cb } = color;
+
+const resolveGamePath = async (dir, subs = ['_retail_', '_ptr_', '_classic_']) => {
+    const { folders } = await dirContent({ dir });
+    const sub = Array.isArray(subs)
+        ? folders.find(f => subs.includes(f))
+        : folders.find(f => f === subs);
+    if (sub) return path.join(dir, sub);
+    return path.resolve(dir);
+};
 
 const createProifle = async (index, data) => {
     const name = data.name ? `${index}:${data.name}` : index;
