@@ -8,4 +8,5 @@
 # Project files
 build/
 src/app/
-wow.profiles.json
+wcm.logger.json
+wcm.profiles.json
