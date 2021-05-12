@@ -223,8 +223,10 @@ const listen = profile => {
     if (counter === profiles.length) {
         // eslint-disable-next-line no-console
         console.warn('No valid profiles found; Running in listen only mode');
-        used.clear();
+
         const { monitor } = listen({ ...defaultProfile, name: 'GLOBAL' });
         monitor.start();
     }
+
+    used.clear();
 })();
