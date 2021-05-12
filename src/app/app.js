@@ -154,8 +154,7 @@ const listen = profile => {
     let counter = 0;
     const used = new Set();
 
-    for (const [index, data] of profiles.entries()) {
-        /* eslint-disable no-await-in-loop */
+    const handleProfile = async (index, data) => {
         if (Object.keys(data).length > 0) {
             if (data.directory) {
                 if (await dirExists({ dir: data.directory })) {
@@ -214,7 +213,11 @@ const listen = profile => {
             // eslint-disable-next-line no-console
             console.warn(`Profile [${index}] skipped; Empty profile provided`);
         }
-        /* eslint-enable no-await-in-loop */
+    };
+
+    for (const [index, data] of profiles.entries()) {
+        // eslint-disable-next-line no-await-in-loop
+        await handleProfile(index, data);
     }
 
     if (counter === profiles.length) {
