@@ -40,6 +40,7 @@ class Parser {
         const entries = data.split(newLine);
         const parsed = entries.map(entry => new Line(entry));
         const lines = parsed.filter(line => !line.shouldSkip());
+
         console.debug(`[${this.name}] - Config parsed`); // eslint-disable-line no-console
         return lines;
     }
@@ -47,6 +48,7 @@ class Parser {
     generate(lines) {
         const fixed = this.replace(lines);
         const content = fixed.map(line => line.toString()).join('\r\n');
+
         console.debug(`[${this.name}] - Config generated`); // eslint-disable-line no-console
         return content;
     }
