@@ -126,7 +126,7 @@ const listen = profile => {
             if (profile.kill) {
                 monitor.stop();
                 // eslint-disable-next-line node/no-process-exit
-                await wait(2000).then(() => process.exit(0));
+                await wait(1000).then(() => process.exit(0));
             }
         }
     });
