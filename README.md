@@ -92,6 +92,10 @@ Content of the file must be an object.
 }
 ```
 
+### Known problems
+
+- Game is not being detected when it is started with admin rights, but app without them
+
 ### How to build
 
 > Requires next packages to be installed
