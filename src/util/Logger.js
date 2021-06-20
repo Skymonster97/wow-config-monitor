@@ -16,12 +16,11 @@ class Logger {
             error: { enabled: dl.error, color: 'red' },
         });
 
+        const format = ([key, value]) => [key, { enabled: !!value, color: types[key].color }];
+        const output = Object.entries(levels).filter(([key]) => key in types).map(format);
+
         Reflect.defineProperty(this, 'types', {
-            value: Object.assign(types, Object.fromEntries(
-                Object.entries(levels).filter(([key]) => key in types).map(([key, value]) => {
-                    return [key, { enabled: !!value, color: types[key].color }];
-                }),
-            )),
+            value: Object.assign(types, Object.fromEntries(output)),
         });
 
         Reflect.defineProperty(this, 'console', {
